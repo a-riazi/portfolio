@@ -1,0 +1,87 @@
+---
+---
+
+<html lang="en">
+  <head>
+    <title>Contact | Ahmad Riazi</title>
+  </head>
+  <body>
+    <main style="min-height: 100vh; display: flex; justify-content: center; align-items: center; background: #111; color: #f6f6f9; position: relative;">
+      <div class="linear-gradient-1"></div>
+      <div class="linear-gradient-2"></div>
+      <form id="contact-form" method="POST" action="/api/contact" style="background: #222; padding: 2rem; border-radius: 1rem; box-shadow: 0 2px 16px #0006; min-width: 320px; max-width: 400px; width: 100%; position: relative; z-index: 1;">
+        <h2 style="margin-bottom: 1rem;">Contact Me</h2>
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" required style="width: 100%; margin-bottom: 1rem; padding: 0.5rem; border-radius: 0.5rem; border: none;">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required style="width: 100%; margin-bottom: 1rem; padding: 0.5rem; border-radius: 0.5rem; border: none;">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" required rows="5" style="width: 100%; margin-bottom: 1rem; padding: 0.5rem; border-radius: 0.5rem; border: none;"></textarea>
+        <button type="submit" style="background: #01be96; color: #fff; border: none; padding: 0.75rem 2rem; border-radius: 0.5rem; cursor: pointer;">Send</button>
+        <div id="status" style="margin-top:1rem; color:#01be96;"></div>
+      </form>
+      <script>
+        const form = document.getElementById('contact-form');
+        const statusEl = document.getElementById('status');
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          statusEl.textContent = 'Sending...';
+          const btn = form.querySelector('button[type="submit"]');
+          // Explicitly cast form and button to correct types
+          const htmlForm = form as HTMLFormElement;
+          const htmlBtn = btn as HTMLButtonElement;
+          if (htmlBtn) htmlBtn.disabled = true;
+          try {
+            const formData = new FormData(htmlForm);
+            const res = await fetch(htmlForm.action, {
+              method: 'POST',
+              body: formData,
+            });
+            const json = await res.json().catch(() => ({}));
+            if (res.ok && json.ok) {
+              statusEl.innerHTML = 'Message sent! <br><button id="back-btn" style="margin-top:1rem; background:#01be96; color:#fff; border:none; padding:0.5rem 1.5rem; border-radius:0.5rem; cursor:pointer;">Return to Home</button>';
+              htmlForm.reset();
+              document.getElementById('back-btn').onclick = () => { window.location.href = '/'; };
+            } else {
+              statusEl.textContent = `Error: ${json.error || 'Failed to send message.'}`;
+            }
+          } catch (err) {
+            statusEl.textContent = `Network error: ${err.message}`;
+          } finally {
+            if (htmlBtn) htmlBtn.disabled = false;
+          }
+        });
+      </script>
+    </main>
+<style>
+  .linear-gradient-1 {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 500px;
+    height: 520px;
+    background: radial-gradient(
+      at left center,
+      rgba(1, 190, 150, 0.5),
+      transparent,
+      transparent
+    );
+    z-index: 0;
+  }
+  .linear-gradient-2 {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+      at right center,
+      rgba(1, 190, 150, 0.6),
+      rgb(0, 0, 0),
+      rgb(0, 0, 0)
+    );
+    z-index: 0;
+  }
+</style>
+  </body>
+</html>
